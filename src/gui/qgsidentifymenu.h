@@ -16,13 +16,13 @@
 #ifndef QGSIDENTIFYMENU_H
 #define QGSIDENTIFYMENU_H
 
-#include <QMenu>
-
-#include "qgsmaplayeractionregistry.h"
-#include "qgsmaptoolidentify.h"
-#include "qgsexpressioncontext.h"
 #include "qgis_gui.h"
 #include "qgis_sip.h"
+#include "qgsexpressioncontext.h"
+#include "qgsmaplayeractionregistry.h"
+#include "qgsmaptoolidentify.h"
+
+#include <QMenu>
 
 #ifndef SIP_RUN
 /// \cond PRIVATE
@@ -179,6 +179,24 @@ class GUI_EXPORT QgsIdentifyMenu : public QMenu
      * \deprecated QGIS 3.40. Use QgsHighlight::applyDefaultStyle() instead.
      */
     Q_DECL_DEPRECATED static void styleHighlight( QgsHighlight *highlight ) SIP_DEPRECATED;
+
+  signals:
+
+    /**
+     * Emitted when a \a message should be shown to the user in the application message bar.
+     *
+     * \see messageDiscarded()
+     * \since QGIS 4.0
+     */
+    void messageEmitted( const QString &message, Qgis::MessageLevel level = Qgis::MessageLevel::Info );
+
+    /**
+     * Emitted when the previous message from the tool should be cleared from the application message bar.
+     *
+     * \see messageEmitted()
+     * \since QGIS 4.0
+     */
+    void messageDiscarded();
 
   protected:
     void closeEvent( QCloseEvent *e ) override;

@@ -19,15 +19,14 @@
 #ifndef QGSLAYERTREEMODELLEGENDNODE_H
 #define QGSLAYERTREEMODELLEGENDNODE_H
 
-#include <QIcon>
-#include <QObject>
-
 #include "qgis_core.h"
 #include "qgis_sip.h"
-
 #include "qgsexpressioncontext.h"
 #include "qgslegendpatchshape.h"
 #include "qgspallabeling.h"
+
+#include <QIcon>
+#include <QObject>
 
 class QgsLayerTreeLayer;
 class QgsLayerTreeModel;
@@ -273,11 +272,9 @@ class CORE_EXPORT QgsLayerTreeModelLegendNode : public QObject
 
     /**
      * Entry point called from QgsLegendRenderer to do the rendering.
-     *  Default implementation calls drawSymbol() and drawSymbolText() methods.
-     *
-     *  If ctx is NULLPTR, this is just first stage when preparing layout - without actual rendering.
+     * Default implementation calls drawSymbol() and drawSymbolText() methods.
      */
-    virtual ItemMetrics draw( const QgsLegendSettings &settings, ItemContext *ctx );
+    virtual ItemMetrics draw( const QgsLegendSettings &settings, ItemContext &ctx );
 
     /**
      * Entry point called from QgsLegendRenderer to do the rendering in a
@@ -409,7 +406,7 @@ class CORE_EXPORT QgsSymbolLegendNode : public QgsLayerTreeModelLegendNode
      * \param parent attach a parent QObject to the legend node.
      */
     QgsSymbolLegendNode( QgsLayerTreeLayer *nodeLayer, const QgsLegendSymbolItem &item, QObject *parent SIP_TRANSFERTHIS = nullptr );
-    ~QgsSymbolLegendNode();
+    ~QgsSymbolLegendNode() override;
 
     Qt::ItemFlags flags() const override;
     QVariant data( int role ) const override;
@@ -797,7 +794,7 @@ class CORE_EXPORT QgsDataDefinedSizeLegendNode : public QgsLayerTreeModelLegendN
 
     QVariant data( int role ) const override;
 
-    ItemMetrics draw( const QgsLegendSettings &settings, ItemContext *ctx ) override;
+    ItemMetrics draw( const QgsLegendSettings &settings, ItemContext &ctx ) override;
 
 #ifdef SIP_RUN
     SIP_PYOBJECT __repr__();

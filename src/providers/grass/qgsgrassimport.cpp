@@ -14,8 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <QByteArray>
-#include <QtConcurrentRun>
+#include "qgsgrassimport.h"
 
 #include "qgscoordinatereferencesystem.h"
 #include "qgscoordinatetransform.h"
@@ -24,10 +23,12 @@
 #include "qgsgeometry.h"
 #include "qgsrasterdataprovider.h"
 #include "qgsrasteriterator.h"
-#include "qgsgrassimport.h"
-#include "moc_qgsgrassimport.cpp"
 
+#include <QByteArray>
 #include <QFileInfo>
+#include <QtConcurrentRun>
+
+#include "moc_qgsgrassimport.cpp"
 
 extern "C"
 {
@@ -150,7 +151,7 @@ void QgsGrassImport::setError( const QString &error )
   mError = error;
 }
 
-QString QgsGrassImport::error()
+QString QgsGrassImport::error() const
 {
   return mError;
 }
@@ -191,9 +192,9 @@ void QgsGrassImport::cancel()
 }
 
 //------------------------------ QgsGrassRasterImport ------------------------------------
-QgsGrassRasterImport::QgsGrassRasterImport( QgsRasterPipe *pipe, const QgsGrassObject &grassObject, const QgsRectangle &extent, int xSize, int ySize )
+QgsGrassRasterImport::QgsGrassRasterImport( std::unique_ptr<QgsRasterPipe> pipe, const QgsGrassObject &grassObject, const QgsRectangle &extent, int xSize, int ySize )
   : QgsGrassImport( grassObject )
-  , mPipe( pipe )
+  , mPipe( std::move( pipe ) )
   , mExtent( extent )
   , mXSize( xSize )
   , mYSize( ySize )
@@ -207,7 +208,6 @@ QgsGrassRasterImport::~QgsGrassRasterImport()
     QgsDebugMsgLevel( "mFutureWatcher not finished -> waitForFinished()", 3 );
     mFutureWatcher->waitForFinished();
   }
-  delete mPipe;
 }
 
 bool QgsGrassRasterImport::import()
